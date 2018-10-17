@@ -1,7 +1,9 @@
 require('dotenv').config();
+const fs=require('fs');
 const request=require("request");
 let userCommand=process.argv[2];
 
+//capitalizes the first character of a string
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
@@ -29,6 +31,7 @@ function upcomingConcerts(){
              console.log(`No upcoming events found for ${artistName}.`);
          }
          else {
+             console.log("\nUpcoming Concerts:")
              for (let i = 0; i < res.body.length; i++) {
                  let lat=parseFloat(res.body[i].venue.latitude).toFixed(4);
                  let long=parseFloat(res.body[i].venue.longitude).toFixed(4);
@@ -46,14 +49,28 @@ function searchSpotify(){
     const keys=require("./assets/keys.js");
     const Spotify = require('node-spotify-api');
     const spotify = new Spotify(keys.spotify);
+    // console.log(keys.spotify);
+    let trackID='5JZcX7TTLx4l0xFIXJ3DBt';
 
-    spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
-        if (err) {
-          return console.log('Error occurred: ' + err);
-        }
+    // Searches based on type/name
+    // spotify.search({ type: 'track', query: "What's My Age Again", limit:1 }, function(err, data) {
+    //     if (err) {
+    //       return console.log('Error occurred: ' + err);
+    //     }
        
-      console.log(data); 
-      });
+    //   console.log(data);
+    //   console.log("\nITEMS[0]: "+JSON.stringify(data.tracks.items[0]));
+    //   });
+
+    // Requests based on trackID
+    spotify
+  .request(`https://api.spotify.com/v1/tracks/${trackID}`)
+  .then(function(data) {
+    console.log(data); 
+  })
+  .catch(function(err) {
+    console.error('Error occurred: ' + err); 
+  });
 
 }
 
@@ -75,7 +92,7 @@ function doThis(command) {
            upcomingConcerts();
 
             break;
-        case "spotify-song":
+        case "spotify-this-song":
             // console.log(command);
             searchSpotify();
             break;
