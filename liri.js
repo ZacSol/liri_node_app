@@ -2,6 +2,9 @@ require('dotenv').config();
 const fs=require('fs');
 const request=require("request");
 let userCommand=process.argv[2];
+const keys=require("./assets/keys.js");
+const Spotify = require('node-spotify-api');
+const spotify = new Spotify(keys.spotify);
 
 //capitalizes the first character of a string
 String.prototype.capitalize = function() {
@@ -45,33 +48,40 @@ function upcomingConcerts(){
 
 // Search spotify for song and display Artist, Song Name, Containing Album, & Preview link from Spotify
 //If no song is provided then program will default to "What's My Age Again" by blink-182.
-function searchSpotify(){
-    const keys=require("./assets/keys.js");
-    const Spotify = require('node-spotify-api');
-    const spotify = new Spotify(keys.spotify);
+function searchSpotify(songTitle){
     // console.log(keys.spotify);
-    let trackID='5JZcX7TTLx4l0xFIXJ3DBt';
-
     // Searches based on type/name
-    // spotify.search({ type: 'track', query: "What's My Age Again", limit:1 }, function(err, data) {
-    //     if (err) {
-    //       return console.log('Error occurred: ' + err);
-    //     }
+    spotify.search({ type: 'track', query: songTitle, limit:1 }, function(err, data) {
+        if (err) {
+          return console.log('Error occurred: ' + err);
+        }
        
     //   console.log(data);
-    //   console.log("\nITEMS[0]: "+JSON.stringify(data.tracks.items[0]));
-    //   });
+    //   console.log("\nITEMS[0].album: "+JSON.stringify(data.tracks.items[0].id));
+      trackID=data.tracks.items[0].id;
+    //   console.log(trackID);
+      spotifyById(trackID);
+      });
 
+
+    
+}
+
+function spotifyById(trackID){
+    // console.log(trackID);
+    if(trackID===undefined){
+        trackID='5JZcX7TTLx4l0xFIXJ3DBt';
+    }
+    
     // Requests based on trackID
     spotify
-  .request(`https://api.spotify.com/v1/tracks/${trackID}`)
-  .then(function(data) {
-    console.log(data); 
-  })
-  .catch(function(err) {
-    console.error('Error occurred: ' + err); 
-  });
-
+        .request(`https://api.spotify.com/v1/tracks/${trackID}`)
+        .then(function(data) {
+            console.log(data); 
+        })
+        .catch(function(err) {
+            console.error('Error occurred: ' + err); 
+        });
 }
 
 // Output movie title, year released, IMDB rating, Rotten Tomatoes rating, country produced in, movie language, plot, and cast
@@ -90,20 +100,34 @@ function doThis(command) {
         case "concert-this":
             // console.log(command);
            upcomingConcerts();
+            break;
 
-            break;
         case "spotify-this-song":
-            // console.log(command);
-            searchSpotify();
+            // console.log(command, process.argv[3]);
+            if (process.argv[3]) {
+                let songTitle = "";
+                for (let i = 3; i < process.argv.length; i++) {
+                    songTitle += process.argv[i] + " ";
+                }
+                    songTitle=songTitle.slice(0,-1);
+                    // console.log(songTitle);
+                    searchSpotify(songTitle);
+            }
+            else {
+                spotifyById(undefined);
+            }
             break;
+
         case "movie-this":
             // console.log(command);
             getMovieInfo();
             break;
+
         case "do-what-it-says":
             // console.log(command);
             doWhatItSays();
             break;
+
         default:
             console.log("You entered an invalid command.");
             break;
