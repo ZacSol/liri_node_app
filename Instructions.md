@@ -172,7 +172,7 @@ const spotify = new Spotify(keys.spotify);
 
      * It should run `spotify-this-song` for "I Want it That Way," as follows the text in `random.txt`.
 
-     * Edit the text in random.txt to test out the feature for movie-this and my-tweets
+     * Edit the text in random.txt to test out the feature for movie-this 
 
 ### CHALLENGE
 
