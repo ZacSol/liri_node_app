@@ -1,3 +1,6 @@
 node_modules
 .DS_Store
 .env
+spotifyEX.txt
+bandsintownEX.json
+getMovie.txt

@@ -25,6 +25,7 @@ function upcomingConcerts(){
      request(`https://rest.bandsintown.com/artists/${artist}/events?app_id=codingbootcamp`, function (error, res, body) {
          if (error) {
              console.log('error:', error); // Print the error if one occurred
+             return;
          }
          console.log('statusCode:', res && res.statusCode); // Print the response status code if a response was received
          // console.log('body:', body); // Print the HTML for the Google homepage.
@@ -46,7 +47,7 @@ function upcomingConcerts(){
      });
 }
 
-
+// when given a song title, finds the track ID
 function searchSpotify(songTitle){
     // console.log(keys.spotify);
     // Searches based on type/name
@@ -91,8 +92,35 @@ function spotifyById(trackID){
 
 // Output movie title, year released, IMDB rating, Rotten Tomatoes rating, country produced in, movie language, plot, and cast
 // If user inputs nothing, output data for Mr. Nobody
-function getMovieInfo(){
+function getMovieInfo(movieTitle) {
+    if(movieTitle===undefined){
+        movieTitle="Mr.+Nobody";
+    }
+    request(`http://www.omdbapi.com/?t=${movieTitle}&apikey=edcf067b`, function (error, res,body) {
+        if (error) {
+            console.log(error);
+            // return;
+        }
+        console.log('statusCode:', res && res.statusCode);
+        res.body = JSON.parse(res.body);
+        // console.log(res.body,typeof(res.body));
+        console.log(`\nTitle: ${res.body.Title}`);
+        console.log(`Released in: ${res.body.Year}`);
+        console.log(`Rated ${res.body.Ratings[0].Value} on ${res.body.Ratings[0].Source} and ${res.body.Ratings[1].Value} on ${res.body.Ratings[1].Source}.`);
+        console.log(`Produced in: ${res.body.Country}`);
+        console.log(`Language: ${res.body.Language}`);
+        console.log(`Plot: ${res.body.Plot}`);
+        console.log(`Cast: ${res.body.Actors}`);
 
+        // // Get response data for combing
+        //fs.writeFile("getMovie.txt",JSON.stringify(res.body),function(err){
+        //     if (err) {
+        //         return console.log(err);
+        //       }
+            
+        //       console.log('getMovie.txt was updated!');
+        // })
+    })
 }
 
 // LIRI uses input from text contained in random.txt
@@ -125,7 +153,18 @@ function doThis(command) {
 
         case "movie-this":
             // console.log(command);
-            getMovieInfo();
+            if (process.argv[3]) {
+                let movie = "";
+                for (let i = 3; i < process.argv.length; i++) {
+                    movie += process.argv[i] + "+";
+                }
+                movie = movie.slice(0, -1);
+                // console.log(movie);
+                getMovieInfo(movie);
+            }
+            else {
+                getMovieInfo(undefined);
+            }
             break;
 
         case "do-what-it-says":
