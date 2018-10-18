@@ -12,27 +12,18 @@ String.prototype.capitalize = function() {
 }
 
 // checks BandsInTown for upcoming concerts and displays venue name and location
-function upcomingConcerts(){
-     // let artist="avengedsevenfold";
-     let artist = "";
-     let artistName="";
-     for (let i = 3; i < process.argv.length; i++) {
-         artist += process.argv[i];
-         artistName+=process.argv[i].capitalize()+" ";
-     }
-     artistName = artistName.slice(0,-1);
-    //  console.log(artist,artistName,typeof(artistName));
+function upcomingConcerts(artist){
      request(`https://rest.bandsintown.com/artists/${artist}/events?app_id=codingbootcamp`, function (error, res, body) {
          if (error) {
              console.log('error:', error); // Print the error if one occurred
              return;
          }
-         console.log('statusCode:', res && res.statusCode); // Print the response status code if a response was received
+        //  console.log('statusCode:', res && res.statusCode); // Print the response status code if a response was received
          // console.log('body:', body); // Print the HTML for the Google homepage.
          res.body = JSON.parse(res.body);
          // console.log(response.body,response.body.length);
          if (res.body.length < 1) {
-             console.log(`No upcoming events found for ${artistName}.`);
+             console.log(`\nNo upcoming events found for that artist.`);
          }
          else {
              console.log("\nUpcoming Concerts:")
@@ -125,19 +116,59 @@ function getMovieInfo(movieTitle) {
 
 // LIRI uses input from text contained in random.txt
 function doWhatItSays(){
-
+    fs.readFile("./assets/random.txt","utf8",function(error,data){
+        if(error){
+            return console.log(error);
+        }
+        // console.log(data);
+        let dataList=data.split(",");
+        // console.log(dataList);
+        dataList[1]=dataList[1].substr(1).slice(0,-1);
+        // console.log(dataList);
+        let myCommand=dataList[0];
+        console.log("Command: "+myCommand);
+        let remainingData=dataList[1];
+        console.log("Remaining: "+remainingData);
+        doThis(myCommand,remainingData);
+    })
 }
 
-function doThis(command) {
+function doThis(command,extraData) {
     switch (command) {
         case "concert-this":
             // console.log(command);
-           upcomingConcerts();
+            if(extraData){
+                let artist="";
+                let dataArr=extraData.split(" ");
+                for(let i=0;i<dataArr.length;i++){
+                    artist+=dataArr[i];
+                }
+                upcomingConcerts(artist);
+            }
+            else if (!process.argv[3]) {
+                console.log("You didn't enter an artist.");
+            }
+            else {
+                // let artist="avengedsevenfold";
+                let artist = "";
+                // let artistName = "";
+                for (let i = 3; i < process.argv.length; i++) {
+                    artist += process.argv[i];
+                    // artistName += process.argv[i].capitalize() + " ";
+                }
+                artistName = artistName.slice(0, -1);
+                //  console.log(artist,artistName,typeof(artistName));
+                upcomingConcerts(artist);
+            }
             break;
 
         case "spotify-this-song":
             // console.log(command, process.argv[3]);
-            if (process.argv[3]) {
+            if (extraData){
+                // console.log(extraData);
+                searchSpotify(extraData);
+            }
+            else if(process.argv[3]) {
                 let songTitle = "";
                 for (let i = 3; i < process.argv.length; i++) {
                     songTitle += process.argv[i] + " ";
@@ -153,8 +184,18 @@ function doThis(command) {
 
         case "movie-this":
             // console.log(command);
-            if (process.argv[3]) {
-                let movie = "";
+            let movie = "";
+            if (extraData){
+                let dataArr=extraData.split(" ");
+                // console.log(dataArr);
+                for(let i =0;i<dataArr.length;i++){
+                    movie+=dataArr[i]+"+";
+                }
+                movie=movie.slice(0,-1);
+                // console.log(movie);
+                getMovieInfo(movie);
+            }
+            else if(process.argv[3]) {
                 for (let i = 3; i < process.argv.length; i++) {
                     movie += process.argv[i] + "+";
                 }
@@ -177,5 +218,10 @@ function doThis(command) {
             break;
     }
 }
-
-doThis(userCommand);
+fs.writeFile("log.txt","",function(error){
+    if(error){
+        return console.log(error);
+    }
+    console.log("log.txt was created.\n");
+});
+doThis(userCommand,undefined);
