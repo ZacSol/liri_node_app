@@ -1,6 +1,6 @@
-#LIRIbot Project
+# LIRIbot Project
 
-###What Does It Do?
+### What Does It Do?
 The LIRIbot is a command line application that uses APIs to pull information. 
 
 It includes:
@@ -8,10 +8,10 @@ It includes:
 * OMBd - information on movie title searches.
 * Bands In Town - information on upcoming concerts for searched artists.
 
-###Why should you care?
+### Why should you care?
 The application allows you to quickly pull information for music/movies/concerts to keep yourself enterained.
 
-###How to use:
+### How to use:
 The user types everything into the command line. To run the program, start with "node liri.js" and add the selection. An example would be "node liri.js movie-this hackers". 
 
 The commands include:
