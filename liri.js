@@ -33,15 +33,14 @@ function upcomingConcerts(artist){
          res.body = JSON.parse(res.body);
         //  console.log(res.body);
          if (res.body.length < 1) {
-             let output=`\nNo upcoming events found for that artist.`;
-             console.log(output);
-             updateLog(output);
+             console.log("No upcoming events found for that artist.");
+             updateLog(`No upcoming events found for that artist.\n***End of search result.***\n\n`);
              
          }
          else {
              let fullOut="";
              console.log("\nUpcoming Concerts:");
-             updateLog("\nUpcoming Concerts:");
+             updateLog("Upcoming Concerts:\n");
              for (let i = 0; i < res.body.length; i++) {
                  let lat=parseFloat(res.body[i].venue.latitude).toFixed(4);
                  let long=parseFloat(res.body[i].venue.longitude).toFixed(4);
@@ -61,7 +60,7 @@ function upcomingConcerts(artist){
                     fullOut+=`\n${output}`;
                 }
              }
-             fullOut+="\n\n***End of search result.***";
+             fullOut+="\n***End of search result.***\n\n";
              updateLog(fullOut);
          }
         //  console.log(artistName);
@@ -101,11 +100,9 @@ function spotifyById(trackID){
         .request(`https://api.spotify.com/v1/tracks/${trackID}`)
         .then(function(data) {
             // console.log(data); 
-            console.log(`Track: ${data.name}`)
-            console.log(`by: ${data.artists[0].name.capitalize()}`)
-            console.log(`Album: ${data.album.name}`);
-            console.log(`Listen here: ${data.external_urls.spotify}`);
-            
+            let output=`Track: ${data.name} \nby: ${data.artists[0].name.capitalize()} \nAlbum: ${data.album.name} \nListen here: ${data.external_urls.spotify}`;
+            console.log(output);
+            updateLog(output+"\n***End of search result.***\n\n");
         })
         .catch(function(err) {
             console.error('Error occurred: ' + err); 
@@ -127,13 +124,9 @@ function getMovieInfo(movieTitle) {
         console.log('statusCode:', res && res.statusCode);
         res.body = JSON.parse(res.body);
         // console.log(res.body,typeof(res.body));
-        console.log(`\nTitle: ${res.body.Title}`);
-        console.log(`Released in: ${res.body.Year}`);
-        console.log(`Rated ${res.body.Ratings[0].Value} on ${res.body.Ratings[0].Source} and ${res.body.Ratings[1].Value} on ${res.body.Ratings[1].Source}.`);
-        console.log(`Produced in: ${res.body.Country}`);
-        console.log(`Language: ${res.body.Language}`);
-        console.log(`Plot: ${res.body.Plot}`);
-        console.log(`Cast: ${res.body.Actors}`);
+        let output=`Title: ${res.body.Title}\nReleased in: ${res.body.Year}\nRated ${res.body.Ratings[0].Value} on ${res.body.Ratings[0].Source} and ${res.body.Ratings[1].Value} on ${res.body.Ratings[1].Source}.\nProduced in: ${res.body.Country}\nLanguage: ${res.body.Language}\nPlot: ${res.body.Plot}\nCast: ${res.body.Actors}`;
+        console.log(output);
+        updateLog(output+"\n***End of search result.***\n\n");
 
         // // Get response data for combing
         //fs.writeFile("getMovie.txt",JSON.stringify(res.body),function(err){
@@ -179,7 +172,7 @@ function doThis(command,extraData) {
                 upcomingConcerts(artist);
             }
             else if (!process.argv[3]) {
-                updateLog("User typed 'concert-this' but did not enter an artist.")
+                updateLog("User typed 'concert-this' but did not enter an artist.\n\n")
                 console.log("You didn't enter an artist.");
             }
             else {
@@ -192,7 +185,7 @@ function doThis(command,extraData) {
                 }
                 artistName = artistName.slice(0, -1);
                 //  console.log(artist,artistName,typeof(artistName));
-                updateLog(`\nUser input: "${command} ${artistName}"`);
+                updateLog(`User input: "${command} ${artistName}"\n`);
                 upcomingConcerts(artist);
             }
             break;
@@ -210,10 +203,11 @@ function doThis(command,extraData) {
                 }
                     songTitle=songTitle.slice(0,-1);
                     // console.log(songTitle);
-                    updateLog(`\nUser input: "${command} ${songTitle}"`);
+                    updateLog(`User input: "${command} ${songTitle}"\n`);
                     searchSpotify(songTitle);
             }
             else {
+                updateLog(`User input: "${command}"\n`);
                 spotifyById(undefined);
             }
             break;
@@ -237,17 +231,18 @@ function doThis(command,extraData) {
                 }
                 movie = movie.slice(0, -1);
                 // console.log(movie);
-                updateLog(`\nUser input: "${command} ${movie}"`);
+                updateLog(`User input: "${command} ${movie}"\n`);
                 getMovieInfo(movie);
             }
             else {
+                updateLog(`User input: "${command}"\n`);
                 getMovieInfo(undefined);
             }
             break;
 
         case "do-what-it-says":
             // console.log(command);
-            updateLog(`\nUser input: "${command}"`);
+            updateLog(`User input: "${command}"\n`);
             doWhatItSays();
             break;
 
