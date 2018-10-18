@@ -20,3 +20,9 @@ The commands include:
 * "spotify-this-song" -- accepts a song title, defaults to "What's My Age Again" by blink-182.
 
 * "movie-this" -- accepts a movie title, defaults to Mr. Nobody.
+
+* "do-what-it-says" -- pulls the data sitting in the random.txt file to run the commands based on what it says. File should contain the proper format to function.
+```
+command,"query"
+```
+
