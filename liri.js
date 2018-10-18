@@ -46,8 +46,7 @@ function upcomingConcerts(){
      });
 }
 
-// Search spotify for song and display Artist, Song Name, Containing Album, & Preview link from Spotify
-//If no song is provided then program will default to "What's My Age Again" by blink-182.
+
 function searchSpotify(songTitle){
     // console.log(keys.spotify);
     // Searches based on type/name
@@ -66,7 +65,8 @@ function searchSpotify(songTitle){
 
     
 }
-
+// Search spotify for song and display Artist, Song Name, Containing Album, & Preview link from Spotify
+//If no song is provided then program will default to "What's My Age Again" by blink-182.
 function spotifyById(trackID){
     // console.log(trackID);
     if(trackID===undefined){
@@ -77,7 +77,12 @@ function spotifyById(trackID){
     spotify
         .request(`https://api.spotify.com/v1/tracks/${trackID}`)
         .then(function(data) {
-            console.log(data); 
+            // console.log(data); 
+            console.log(`Track: ${data.name}`)
+            console.log(`by: ${data.artists[0].name.capitalize()}`)
+            console.log(`Album: ${data.album.name}`);
+            console.log(`Listen here: ${data.external_urls.spotify}`);
+            
         })
         .catch(function(err) {
             console.error('Error occurred: ' + err); 
